@@ -2,3 +2,4 @@
 /.vscode/
 credentials.txt
 settings.json
+/__pycache__/
