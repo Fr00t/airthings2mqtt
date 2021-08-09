@@ -95,36 +95,38 @@ def parse_sensor_data(sensor_data):
             
     return publish_list
 
-try:
-    with open('settings.json') as json_file:
-        settings = json.load(json_file)
-except FileNotFoundError:
-    print("Couldn't find settings in folder. Please run setup.py to get started")
-    sys.exit()
+
+if __name__ == "__main":
+    try:
+        with open('settings.json') as json_file:
+            settings = json.load(json_file)
+    except FileNotFoundError:
+        print("Couldn't find settings in folder. Please run setup.py to get started")
+        sys.exit()
 
 
-if settings['expiry'] - time.time() < 60:
-    access_token, expiry = get_access_token(settings['airthings_username'], settings['airthings_password'])
-    settings['access_token'] = access_token
-    settings['expiry'] = expiry
-    with open('settings.json', 'w') as fp:
-        json.dump(settings, fp, indent=4, sort_keys=True)
+    if settings['expiry'] - time.time() < 60:
+        access_token, expiry = get_access_token(settings['airthings_username'], settings['airthings_password'])
+        settings['access_token'] = access_token
+        settings['expiry'] = expiry
+        with open('settings.json', 'w') as fp:
+            json.dump(settings, fp, indent=4, sort_keys=True)
 
-sensor_data = get_sensor_data(settings['access_token'])
-publish_list = parse_sensor_data(sensor_data)
+    sensor_data = get_sensor_data(settings['access_token'])
+    publish_list = parse_sensor_data(sensor_data)
 
-client = mqtt.Client("Airthings2MQTT")
-if "mqtt_password" in settings:
-    client.username_pw_set(username=settings['mqtt_username'], password=settings['mqtt_password']) 
+    client = mqtt.Client("Airthings2MQTT")
+    if "mqtt_password" in settings:
+        client.username_pw_set(username=settings['mqtt_username'], password=settings['mqtt_password']) 
 
-client.loop_start()
+    client.loop_start()
 
-client.connect(settings['mqtt_adress'], port=settings['mqtt_port'])
+    client.connect(settings['mqtt_adress'], port=settings['mqtt_port'])
 
-#Allow time for connecting to MQTT. client.connect doesn't always await connection correctly
-time.sleep(3)
+    #Allow time for connecting to MQTT. client.connect doesn't always await connection correctly
+    time.sleep(3)
 
-for t in publish_list:
-    client.publish(t[0], t[1])
+    for t in publish_list:
+        client.publish(t[0], t[1])
 
-client.loop_stop()
+    client.loop_stop()

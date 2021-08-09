@@ -1,15 +1,30 @@
 from tabulate import tabulate
 from getpass import getpass
-from airthings2mqtt import get_sensor_data, get_access_token, parse_sensor_data, on_connect
-import paho.mqtt as mqtt
+from airthings2mqtt import get_sensor_data, get_access_token, parse_sensor_data
+import paho.mqtt.client as mqtt
 import time
 import json
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Successfully connected to MQTT-broker")
+    elif rc == 1:
+        print("connection refused, unacceptable protocol version")
+    elif rc == 2:
+        print("Connection refused, identifier rejected")
+    elif rc == 3:
+        print("Connection refused, server unavailable")
+    elif rc == 4:
+        print("Connection refused, bad user name or password")
+    elif rc == 5:
+    	print("Connection refused, not authorized")
 
 mqtt_connection = False
 airthings_connection = False
 settings = {}
 mqtt_connection
 airthings_connection
+
 print("Running setup of program")
 print()
 while airthings_connection is False:
@@ -55,12 +70,14 @@ while mqtt_connection is False:
         client.connect(mqtt_adress, port=mqtt_port)
         time.sleep(5)
         client.loop_stop()
+        mqtt_connection = True
     except:
         client.loop_stop()
         print("Couldn't connect to the broker, please check settings.")
-if mqtt_username != '':
-    settings['mqtt_username'] = mqtt_username
-    settings['mqtt_password'] = mqtt_password
+
+    if mqtt_username != '':
+        settings['mqtt_username'] = mqtt_username
+        settings['mqtt_password'] = mqtt_password
 
 print("Available QOS-levels of MQTT: ")
 print("0 - At most once")
