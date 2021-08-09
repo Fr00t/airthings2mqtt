@@ -78,12 +78,12 @@ def parse_sensor_data(sensor_data):
     for device in sensor_data.get("currentDashboard", {}).get("tiles", []):
         if device.get("type") != 'device':
             continue
-        location = device.get("content", {}).get("locationName")
-        room = device.get("content", {}).get("roomName")
+        location = device.get("content", {}).get("locationName").replace(" ", "_")
+        room = device.get("content", {}).get("roomName").replace(" ", "_")
         battery = device.get("content", {}).get("batteryPercentage")
         latest_sample = device.get("content", {}).get("latestSample")
-        publish_list.append(["airthings2MQTT/"+location.replace(" ", "_")+"/"+room.replace(" ", "_")+"/Battery_Percentage", battery, "%"])
-        publish_list.append(["airthings2MQTT/"+location.replace(" ", "_")+"/"+room.replace(" ", "_")+"/Latest_sample", latest_sample, "ISO8601 Datetime"])
+        publish_list.append(["airthings2MQTT/"+location+"/"+room+"/Battery_Percentage", battery, "%"])
+        publish_list.append(["airthings2MQTT/"+location+"/"+room+"/Latest_sample", latest_sample, "ISO8601 Datetime"])
         
         sensors = device.get("content", {}).get("currentSensorValues", [])
         if not sensors:
@@ -92,12 +92,14 @@ def parse_sensor_data(sensor_data):
             continue
 
         for sensor in sensors:
-            publish_list.append(["airthings2MQTT/"+location.replace(" ", "_")+"/"+room.replace(" ", "_")+"/"+sensor["type"], sensor['value'], sensor['providedUnit']])
+            publish_list.append(["airthings2MQTT/"+location+"/"+room+"/"+sensor["type"], sensor['value'], sensor['providedUnit']])
             
     return publish_list
 
+def on_publish(client, userdata, result):
+    print(f"Published message - result {result}")
 
-if __name__ == "__main":
+if __name__ == "__main__":
     try:
         with open('settings.json') as json_file:
             settings = json.load(json_file)
@@ -121,6 +123,7 @@ if __name__ == "__main":
         client.username_pw_set(username=settings['mqtt_username'], password=settings['mqtt_password']) 
 
     client.loop_start()
+    client.on_publish = on_publish
 
     client.connect(settings['mqtt_adress'], port=settings['mqtt_port'])
 
@@ -129,5 +132,7 @@ if __name__ == "__main":
 
     for t in publish_list:
         client.publish(t[0], t[1])
+
+    time.sleep(5)
 
     client.loop_stop()
