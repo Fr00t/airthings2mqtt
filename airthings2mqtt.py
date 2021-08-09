@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #Parts of code sourced from https://github.com/Danielhiversen/home_assistant_airthings_cloud 
 #which was shared using the Apache licence. Particularily functions get_access_token and 
 #get_sensor_data har been sourced from Daniel.
