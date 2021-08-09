@@ -96,8 +96,6 @@ def parse_sensor_data(sensor_data):
             
     return publish_list
 
-def on_publish(client, userdata, result):
-    print(f"Published message - result {result}")
 
 if __name__ == "__main__":
     try:
@@ -123,8 +121,7 @@ if __name__ == "__main__":
         client.username_pw_set(username=settings['mqtt_username'], password=settings['mqtt_password']) 
 
     client.loop_start()
-    client.on_publish = on_publish
-
+    
     client.connect(settings['mqtt_adress'], port=settings['mqtt_port'])
 
     #Allow time for connecting to MQTT. client.connect doesn't always await connection correctly
