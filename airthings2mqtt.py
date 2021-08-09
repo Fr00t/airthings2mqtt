@@ -1,5 +1,6 @@
 #Parts of code sourced from https://github.com/Danielhiversen/home_assistant_airthings_cloud 
-#which was shared using the Apache licence.
+#which was shared using the Apache licence. Particularily functions get_access_token and 
+#get_sensor_data har been sourced from Daniel.
 
 import json
 import logging
@@ -13,7 +14,7 @@ def get_access_token(username, password):
     """Uses stored credentials to fetch a new access token.
 
     Returns:
-        [str,int]: [Access Token, seconds to expiration]
+        [str,int]: [Access Token, timestamp of expiration]
     """
     headers = {
         "content-type": "application/json;charset=UTF-8",
@@ -125,3 +126,5 @@ time.sleep(3)
 
 for t in publish_list:
     client.publish(t[0], t[1])
+
+client.loop_stop()
