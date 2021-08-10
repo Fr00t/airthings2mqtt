@@ -2,7 +2,7 @@
 This program will transfer data from Airthings sensors such as the [Wave Mini](https://www.airthings.com/en/wave-mini) 
 or [Wave Plus](https://www.airthings.com/en/wave-plus) via their Dashboard to a MQTT-broker of your choice.
 
-###Prerequisites:
+###Prerequisites
 This program will only get your sensor data from the cloud, it will not connect directly to the sensors. This means you need an Airthings account, and a way of syncing the data to the cloud. The simplest method being their [Airthings Hub](https://www.airthings.com/en/hub) or the [View Plus](https://www.airthings.com/en/view-plus). Having the app on your phone and connected to the sensor will also sync to the cloud, albeit with a delay.
 
 You also need to have a dashboard set up on [https://dashboard.airthings.com](https://dashboard.airthings.com) 
